@@ -729,7 +729,7 @@ Attaching 1 probe...
 tracepoint example:
 
 ```
-# bpftrace -e 'tracepoint:syscalls:sys_enter_openat { printf("%s %s\n", comm, str(args.filename)); }'
+# bpftrace -e 'tracepoint:syscalls:sys_enter_openat { printf("%s %s\n", comm, str(args->filename)); }'
 Attaching 1 probe...
 snmpd /proc/diskstats
 snmpd /proc/stat
@@ -1413,7 +1413,7 @@ Examples in situ:
 Example:
 
 ```
-# bpftrace -e 'tracepoint:syscalls:sys_enter_openat { printf("%s %s\n", comm, str(args.filename)); }'
+# bpftrace -e 'tracepoint:syscalls:sys_enter_openat { printf("%s %s\n", comm, str(args->filename)); }'
 Attaching 1 probe...
 irqbalance /proc/interrupts
 irqbalance /proc/stat
@@ -2319,7 +2319,7 @@ Syntax: `printf(fmt, args)`
 This behaves like printf() from C and other languages, with a limited set of format characters. Example:
 
 ```
-# bpftrace -e 'tracepoint:syscalls:sys_enter_execve { printf("%s called %s\n", comm, str(args.filename)); }'
+# bpftrace -e 'tracepoint:syscalls:sys_enter_execve { printf("%s called %s\n", comm, str(args->filename)); }'
 Attaching 1 probe...
 bash called /bin/ls
 bash called /usr/bin/man
@@ -2401,7 +2401,7 @@ We can take the `args.filename` of `sys_enter_execve` (a `const char *filename`)
 which it points. This string can be provided as an argument to printf():
 
 ```
-# bpftrace -e 'tracepoint:syscalls:sys_enter_execve { printf("%s called %s\n", comm, str(args.filename)); }'
+# bpftrace -e 'tracepoint:syscalls:sys_enter_execve { printf("%s called %s\n", comm, str(args->filename)); }'
 Attaching 1 probe...
 bash called /bin/ls
 bash called /usr/bin/man
@@ -2581,7 +2581,7 @@ the tasks that belong to the specific cgroup, for example:
 
 ```
 # bpftrace -e 'tracepoint:syscalls:sys_enter_openat /cgroup == cgroupid("/sys/fs/cgroup/unified/mycg")/
-    { printf("%s\n", str(args.filename)); }':
+    { printf("%s\n", str(args->filename)); }':
 Attaching 1 probe...
 /etc/ld.so.cache
 /lib64/libc.so.6
@@ -2896,7 +2896,7 @@ Syntax: `cat(filename)`
 This prints the file content. For example:
 
 ```
-# bpftrace -e 't:syscalls:sys_enter_execve { printf("%s ", str(args.filename)); cat("/proc/loadavg"); }'
+# bpftrace -e 't:syscalls:sys_enter_execve { printf("%s ", str(args->filename)); cat("/proc/loadavg"); }'
 Attaching 1 probe...
 /usr/libexec/grepconf.sh 3.18 2.90 2.94 2/977 30138
 /usr/bin/grep 3.18 2.90 2.94 4/978 30139
@@ -2992,7 +2992,7 @@ Return true if the string haystack contains the string needle, and zero otherwis
 Examples:
 
 ```
-bpftrace -e 't:syscalls:sys_enter_execve /strcontains(str(args.filename),"bin")/ { @[comm, str(args.filename)] = count(); }'  
+bpftrace -e 't:syscalls:sys_enter_execve /strcontains(str(args->filename),"bin")/ { @[comm, str(args->filename)] = count(); }'  
 Attaching 1 probe...
 
 @[sh, /usr/bin/which]: 2
